@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Check, X, Eye, EyeOff, Award } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Check, X, Eye, EyeOff, Award, TrendingUp, Trophy } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid } from 'recharts';
 
 const IntegralTutorial = () => {
@@ -13,7 +13,18 @@ const IntegralTutorial = () => {
   const [failedAttempts, setFailedAttempts] = useState({});
   const [inputHistory, setInputHistory] = useState({});
   
-  // Übungsaufgaben für jede Regel
+  // Lade Fortschritt aus localStorage
+  const [solvedExercises, setSolvedExercises] = useState(() => {
+    const saved = localStorage.getItem('integral-tutorial-progress');
+    return saved ? JSON.parse(saved) : {};
+  });
+
+  // Speichere Fortschritt in localStorage
+  useEffect(() => {
+    localStorage.setItem('integral-tutorial-progress', JSON.stringify(solvedExercises));
+  }, [solvedExercises]);
+
+  // Übungsaufgaben für jede Regel - ERWEITERT mit mehr Aufgaben!
   const exercises = {
     potenz: {
       name: 'Potenzregel',
@@ -71,6 +82,52 @@ const IntegralTutorial = () => {
             'Ergebnis: F(3) - F(1) = 72 - 0 = 72'
           ],
           hint: 'Bestimmtes Integral: Erst Stammfunktion finden, dann F(obere Grenze) - F(untere Grenze) berechnen!'
+        },
+        // NEUE AUFGABEN
+        {
+          id: 'potenz4',
+          difficulty: 'Einfach',
+          question: '∫ x⁵ dx',
+          solution: 'x⁶/6 + C',
+          alternatives: ['x^6/6 + C', '(x^6)/6 + C', '(1/6)x^6 + C'],
+          steps: [
+            'Wende die Potenzregel an: ∫ xⁿ dx = xⁿ⁺¹/(n+1) + C',
+            'n = 5',
+            'Erhöhe den Exponenten: 5 + 1 = 6',
+            'Teile durch 6: x⁶/6',
+            'Lösung: x⁶/6 + C'
+          ],
+          hint: 'Exponent um 1 erhöhen und durch den neuen Exponenten teilen.'
+        },
+        {
+          id: 'potenz5',
+          difficulty: 'Mittel',
+          question: '∫ (x⁴ + 4x³ - 2x²) dx',
+          solution: 'x⁵/5 + x⁴ - 2x³/3 + C',
+          alternatives: ['(x^5)/5 + x^4 - (2x^3)/3 + C', '(1/5)x^5 + x^4 - (2/3)x^3 + C'],
+          steps: [
+            'Integriere jeden Term einzeln',
+            '∫ x⁴ dx = x⁵/5',
+            '∫ 4x³ dx = 4 · x⁴/4 = x⁴',
+            '∫ -2x² dx = -2 · x³/3 = -2x³/3',
+            'Zusammen: x⁵/5 + x⁴ - 2x³/3 + C'
+          ],
+          hint: 'Bearbeite jeden Term mit der Potenzregel separat.'
+        },
+        {
+          id: 'potenz6',
+          difficulty: 'Schwer',
+          question: '∫₀² (3x² + 2x - 1) dx',
+          solution: '10',
+          alternatives: ['10.0', '10,0'],
+          steps: [
+            'Stammfunktion: F(x) = x³ + x² - x',
+            'Berechnung:',
+            'F(2) = 2³ + 2² - 2 = 8 + 4 - 2 = 10',
+            'F(0) = 0³ + 0² - 0 = 0',
+            'Ergebnis: F(2) - F(0) = 10 - 0 = 10'
+          ],
+          hint: 'Erst Stammfunktion bilden, dann Werte einsetzen und subtrahieren.'
         }
       ]
     },
@@ -129,6 +186,49 @@ const IntegralTutorial = () => {
             'Kombiniere: 3ln|x| + x² + C'
           ],
           hint: 'Teile die Summe auf und integriere jeden Term einzeln!'
+        },
+        // NEUE AUFGABEN
+        {
+          id: 'log4',
+          difficulty: 'Einfach',
+          question: '∫ 2/x dx',
+          solution: '2ln|x| + C',
+          alternatives: ['2·ln|x| + C', '2*ln|x| + C'],
+          steps: [
+            'Konstante vor das Integral ziehen',
+            '∫ 2/x dx = 2 · ∫ 1/x dx',
+            '= 2 · ln|x| + C',
+            'Lösung: 2ln|x| + C'
+          ],
+          hint: 'Faktor 2 bleibt vor dem Logarithmus stehen.'
+        },
+        {
+          id: 'log5',
+          difficulty: 'Mittel',
+          question: '∫ (1/x + x²) dx',
+          solution: 'ln|x| + x³/3 + C',
+          alternatives: ['ln|x| + (x^3)/3 + C', 'ln|x| + (1/3)x^3 + C'],
+          steps: [
+            'Zwei Terme getrennt integrieren',
+            'Term 1: ∫ 1/x dx = ln|x|',
+            'Term 2: ∫ x² dx = x³/3',
+            'Zusammen: ln|x| + x³/3 + C'
+          ],
+          hint: 'Logarithmus und Potenzregel kombinieren!'
+        },
+        {
+          id: 'log6',
+          difficulty: 'Schwer',
+          question: '∫ (4/x - 3x²) dx',
+          solution: '4ln|x| - x³ + C',
+          alternatives: ['4·ln|x| - x^3 + C', '4*ln|x| - x^3 + C'],
+          steps: [
+            'Beide Terme separat integrieren',
+            'Term 1: ∫ 4/x dx = 4ln|x|',
+            'Term 2: ∫ -3x² dx = -3 · x³/3 = -x³',
+            'Zusammen: 4ln|x| - x³ + C'
+          ],
+          hint: 'Beachte das Minuszeichen beim zweiten Term!'
         }
       ]
     },
@@ -185,6 +285,49 @@ const IntegralTutorial = () => {
             'Addiere die Ergebnisse: eˣ + x³ + C'
           ],
           hint: 'Kombiniere zwei Regeln: eˣ und die Potenzregel!'
+        },
+        // NEUE AUFGABEN
+        {
+          id: 'exp4',
+          difficulty: 'Einfach',
+          question: '∫ 3eˣ dx',
+          solution: '3eˣ + C',
+          alternatives: ['3·e^x + C', '3*e^x + C', '3e^x + C'],
+          steps: [
+            'Konstante vor das Integral ziehen',
+            '∫ 3eˣ dx = 3 · ∫ eˣ dx',
+            '= 3eˣ + C'
+          ],
+          hint: 'Die 3 bleibt als Faktor vor eˣ.'
+        },
+        {
+          id: 'exp5',
+          difficulty: 'Mittel',
+          question: '∫ (2eˣ - 5x) dx',
+          solution: '2eˣ - 5x²/2 + C',
+          alternatives: ['2e^x - (5x^2)/2 + C', '2e^x - (5/2)x^2 + C'],
+          steps: [
+            'Beide Terme getrennt integrieren',
+            'Term 1: ∫ 2eˣ dx = 2eˣ',
+            'Term 2: ∫ -5x dx = -5 · x²/2 = -5x²/2',
+            'Zusammen: 2eˣ - 5x²/2 + C'
+          ],
+          hint: 'Exponentialfunktion und Potenzregel kombinieren.'
+        },
+        {
+          id: 'exp6',
+          difficulty: 'Schwer',
+          question: '∫ (eˣ + 2x³ - 1/x) dx',
+          solution: 'eˣ + x⁴/2 - ln|x| + C',
+          alternatives: ['e^x + (x^4)/2 - ln|x| + C', 'e^x + (1/2)x^4 - ln|x| + C'],
+          steps: [
+            'Drei Terme einzeln integrieren',
+            'Term 1: ∫ eˣ dx = eˣ',
+            'Term 2: ∫ 2x³ dx = 2 · x⁴/4 = x⁴/2',
+            'Term 3: ∫ -1/x dx = -ln|x|',
+            'Zusammen: eˣ + x⁴/2 - ln|x| + C'
+          ],
+          hint: 'Drei verschiedene Regeln: eˣ, Potenzregel und Logarithmus!'
         }
       ]
     },
@@ -251,10 +394,202 @@ const IntegralTutorial = () => {
             'Achte genau auf die Vorzeichen!'
           ],
           hint: 'Integriere jeden Term einzeln und achte sorgfältig auf die Vorzeichen!'
+        },
+        // NEUE AUFGABEN
+        {
+          id: 'trig4',
+          difficulty: 'Einfach',
+          question: '∫ 2sin(x) dx',
+          solution: '-2cos(x) + C',
+          alternatives: ['-2cos x + C', '-2cosx + C'],
+          steps: [
+            'Konstante vor das Integral',
+            '∫ 2sin(x) dx = 2 · ∫ sin(x) dx',
+            '= 2 · (-cos(x))',
+            '= -2cos(x) + C'
+          ],
+          hint: 'Faktor 2 vor das Integral, dann wie gewohnt integrieren.'
+        },
+        {
+          id: 'trig5',
+          difficulty: 'Mittel',
+          question: '∫ (sin(x) + cos(x)) dx',
+          solution: '-cos(x) + sin(x) + C',
+          alternatives: ['-cos x + sin x + C', '-cosx + sinx + C'],
+          steps: [
+            'Beide Terme getrennt integrieren',
+            'Term 1: ∫ sin(x) dx = -cos(x)',
+            'Term 2: ∫ cos(x) dx = sin(x)',
+            'Zusammen: -cos(x) + sin(x) + C'
+          ],
+          hint: 'Integriere sin und cos getrennt und addiere!'
+        },
+        {
+          id: 'trig6',
+          difficulty: 'Schwer',
+          question: '∫ (4cos(x) + 2sin(x) - x) dx',
+          solution: '4sin(x) - 2cos(x) - x²/2 + C',
+          alternatives: ['4sin x - 2cos x - (x^2)/2 + C', '4sinx - 2cosx - (x^2)/2 + C'],
+          steps: [
+            'Drei Terme einzeln integrieren',
+            'Term 1: ∫ 4cos(x) dx = 4sin(x)',
+            'Term 2: ∫ 2sin(x) dx = 2·(-cos(x)) = -2cos(x)',
+            'Term 3: ∫ -x dx = -x²/2',
+            'Zusammen: 4sin(x) - 2cos(x) - x²/2 + C'
+          ],
+          hint: 'Trigonometrie UND Potenzregel kombinieren!'
+        }
+      ]
+    },
+    // NEUES KAPITEL: SUBSTITUTION!
+    substitution: {
+      name: 'Substitution',
+      formula: '∫ f(g(x))·g\'(x) dx = F(g(x)) + C',
+      color: '#9b59b6',
+      exercises: [
+        {
+          id: 'sub1',
+          difficulty: 'Einfach',
+          question: '∫ 2x·eˣ² dx',
+          solution: 'eˣ² + C',
+          alternatives: ['e^(x^2) + C', 'e^x^2 + C'],
+          steps: [
+            'Substitution: u = x²',
+            'Dann: du/dx = 2x, also du = 2x dx',
+            '',
+            'Das Integral wird zu:',
+            '∫ eᵘ du = eᵘ + C',
+            '',
+            'Rücksubstitution (u = x²):',
+            'eˣ² + C'
+          ],
+          hint: 'Setze u = x². Beachte, dass 2x genau die Ableitung von x² ist!'
+        },
+        {
+          id: 'sub2',
+          difficulty: 'Mittel',
+          question: '∫ cos(3x) dx',
+          solution: 'sin(3x)/3 + C',
+          alternatives: ['(1/3)sin(3x) + C', 'sin(3x)/3+C'],
+          steps: [
+            'Substitution: u = 3x',
+            'Dann: du/dx = 3, also dx = du/3',
+            '',
+            'Das Integral wird zu:',
+            '∫ cos(u) · (1/3) du = (1/3)∫ cos(u) du',
+            '= (1/3) sin(u) + C',
+            '',
+            'Rücksubstitution (u = 3x):',
+            'sin(3x)/3 + C'
+          ],
+          hint: 'Substitution u = 3x. Vergiss nicht, dx durch du/3 zu ersetzen!'
+        },
+        {
+          id: 'sub3',
+          difficulty: 'Schwer',
+          question: '∫ x/(x²+1) dx',
+          solution: 'ln|x²+1|/2 + C',
+          alternatives: ['(1/2)ln(x^2+1) + C', '0.5ln(x^2+1) + C', 'ln(x²+1)/2 + C'],
+          steps: [
+            'Substitution: u = x² + 1',
+            'Dann: du/dx = 2x, also x dx = du/2',
+            '',
+            'Das Integral wird zu:',
+            '∫ (1/u) · (1/2) du = (1/2) ∫ (1/u) du',
+            '= (1/2) ln|u| + C',
+            '',
+            'Rücksubstitution (u = x² + 1):',
+            '(1/2) ln|x² + 1| + C = ln|x²+1|/2 + C',
+            '',
+            'Hinweis: x²+1 ist immer positiv, Betragsstriche nicht nötig'
+          ],
+          hint: 'Setze u = x² + 1. Der Zähler x ist fast die Ableitung des Nenners!'
+        },
+        {
+          id: 'sub4',
+          difficulty: 'Einfach',
+          question: '∫ 3x²·e^(x³) dx',
+          solution: 'e^(x³) + C',
+          alternatives: ['e^x^3 + C', 'exp(x^3) + C'],
+          steps: [
+            'Substitution: u = x³',
+            'Dann: du/dx = 3x², also du = 3x² dx',
+            '',
+            'Das Integral wird zu:',
+            '∫ eᵘ du = eᵘ + C',
+            '',
+            'Rücksubstitution:',
+            'e^(x³) + C'
+          ],
+          hint: '3x² ist genau die Ableitung von x³!'
+        },
+        {
+          id: 'sub5',
+          difficulty: 'Mittel',
+          question: '∫ sin(2x) dx',
+          solution: '-cos(2x)/2 + C',
+          alternatives: ['-(1/2)cos(2x) + C', '-0.5cos(2x) + C'],
+          steps: [
+            'Substitution: u = 2x',
+            'Dann: du/dx = 2, also dx = du/2',
+            '',
+            'Das Integral wird zu:',
+            '∫ sin(u) · (1/2) du = (1/2) ∫ sin(u) du',
+            '= (1/2) · (-cos(u)) + C',
+            '= -cos(u)/2 + C',
+            '',
+            'Rücksubstitution:',
+            '-cos(2x)/2 + C'
+          ],
+          hint: 'u = 2x, dann dx = du/2 einsetzen.'
+        },
+        {
+          id: 'sub6',
+          difficulty: 'Schwer',
+          question: '∫ x·√(x²+4) dx',
+          solution: '(x²+4)^(3/2)/3 + C',
+          alternatives: ['(1/3)(x^2+4)^(3/2) + C', '(x^2+4)^(3/2)/3+C'],
+          steps: [
+            'Substitution: u = x² + 4',
+            'Dann: du/dx = 2x, also x dx = du/2',
+            '',
+            'Das Integral wird zu:',
+            '∫ √u · (1/2) du = (1/2) ∫ u^(1/2) du',
+            '= (1/2) · u^(3/2) / (3/2) + C',
+            '= (1/2) · (2/3) · u^(3/2) + C',
+            '= (1/3) u^(3/2) + C',
+            '',
+            'Rücksubstitution:',
+            '(x²+4)^(3/2)/3 + C'
+          ],
+          hint: 'Setze u = x²+4. Wurzel ist u^(1/2). Mit Potenzregel integrieren!'
         }
       ]
     }
   };
+
+  // Berechne Gesamt-Fortschritt
+  const calculateProgress = () => {
+    let totalExercises = 0;
+    let solvedCount = 0;
+
+    Object.values(exercises).forEach(rule => {
+      totalExercises += rule.exercises.length;
+      rule.exercises.forEach(ex => {
+        if (solvedExercises[ex.id]) {
+          solvedCount++;
+        }
+      });
+    });
+
+    return {
+      solved: solvedCount,
+      total: totalExercises,
+      percentage: Math.round((solvedCount / totalExercises) * 100)
+    };
+  };
+
+  const progress = calculateProgress();
 
   // Animation für Riemann-Summen
   useEffect(() => {
@@ -305,13 +640,21 @@ const IntegralTutorial = () => {
       [exerciseId]: isCorrect
     }));
     
+    // Speichere gelöste Aufgaben
+    if (isCorrect) {
+      setSolvedExercises(prev => ({
+        ...prev,
+        [exerciseId]: true
+      }));
+    }
+    
     // Update input history - keep last 3 entries
     setInputHistory(prev => {
       const currentHistory = prev[exerciseId] || [];
       const newHistory = [
         { answer: userAnswer, correct: isCorrect, timestamp: Date.now() },
         ...currentHistory
-      ].slice(0, 3); // Keep only last 3
+      ].slice(0, 3);
       
       return {
         ...prev,
@@ -324,7 +667,6 @@ const IntegralTutorial = () => {
       setFailedAttempts(prev => {
         const attempts = (prev[exerciseId] || 0) + 1;
         
-        // Auto-show hint after 2 failed attempts
         if (attempts >= 2) {
           setShowHints(prevHints => ({
             ...prevHints,
@@ -338,7 +680,6 @@ const IntegralTutorial = () => {
         };
       });
     } else {
-      // Reset failed attempts on correct answer
       setFailedAttempts(prev => ({
         ...prev,
         [exerciseId]: 0
@@ -356,14 +697,23 @@ const IntegralTutorial = () => {
     const hintVisible = showHints[exercise.id];
     const attempts = failedAttempts[exercise.id] || 0;
     const history = inputHistory[exercise.id] || [];
+    const isSolved = solvedExercises[exercise.id];
 
     return (
-      <div className="exercise-card">
+      <div className={`exercise-card ${isSolved ? 'solved' : ''}`}>
         <div className="exercise-header">
-          <span className={`difficulty difficulty-${exercise.difficulty.toLowerCase()}`}>
-            {exercise.difficulty}
-          </span>
-          {attempts > 0 && (
+          <div className="exercise-header-left">
+            <span className={`difficulty difficulty-${exercise.difficulty.toLowerCase()}`}>
+              {exercise.difficulty}
+            </span>
+            {isSolved && (
+              <span className="solved-badge">
+                <Trophy size={16} />
+                Gelöst
+              </span>
+            )}
+          </div>
+          {attempts > 0 && !isSolved && (
             <span className="attempts-counter">
               Versuche: {attempts}
             </span>
@@ -373,7 +723,6 @@ const IntegralTutorial = () => {
         <div className="exercise-question">
           <div className="question-text">{exercise.question}</div>
           
-          {/* Collapsible Hint Section */}
           <div className="hint-section">
             <button
               className="hint-toggle"
@@ -399,7 +748,6 @@ const IntegralTutorial = () => {
           </div>
         </div>
 
-        {/* Input History */}
         {history.length > 0 && (
           <div className="input-history">
             <div className="history-title">Letzte Eingaben:</div>
@@ -674,24 +1022,42 @@ const IntegralTutorial = () => {
           {!selectedRule ? (
             <>
               <div className="rules-grid">
-                {Object.entries(exercises).map(([key, rule]) => (
-                  <div 
-                    key={key}
-                    className="rule-card clickable"
-                    onClick={() => setSelectedRule(key)}
-                    style={{ borderColor: rule.color }}
-                  >
-                    <div className="rule-name" style={{ color: rule.color }}>
-                      {rule.name}
+                {Object.entries(exercises).filter(([key]) => key !== 'substitution').map(([key, rule]) => {
+                  const ruleProgress = rule.exercises.filter(ex => solvedExercises[ex.id]).length;
+                  const ruleTotal = rule.exercises.length;
+                  return (
+                    <div 
+                      key={key}
+                      className="rule-card clickable"
+                      onClick={() => setSelectedRule(key)}
+                      style={{ borderColor: rule.color }}
+                    >
+                      <div className="rule-name" style={{ color: rule.color }}>
+                        {rule.name}
+                      </div>
+                      <div className="rule-formula">
+                        {rule.formula}
+                      </div>
+                      <div className="rule-progress">
+                        <div className="progress-text">
+                          {ruleProgress} / {ruleTotal} Aufgaben gelöst
+                        </div>
+                        <div className="progress-bar-small">
+                          <div 
+                            className="progress-fill-small" 
+                            style={{ 
+                              width: `${(ruleProgress / ruleTotal) * 100}%`,
+                              backgroundColor: rule.color
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div className="click-hint" style={{ color: rule.color }}>
+                        Klicken für {ruleTotal} Übungen →
+                      </div>
                     </div>
-                    <div className="rule-formula">
-                      {rule.formula}
-                    </div>
-                    <div className="click-hint" style={{ color: rule.color }}>
-                      Klicken für Übungen →
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
               
               <div className="constant-note">
@@ -737,7 +1103,137 @@ const IntegralTutorial = () => {
               <div className="progress-summary">
                 <Award size={24} style={{ color: exercises[selectedRule].color }} />
                 <span>
-                  {Object.values(checkedAnswers).filter(v => v).length} von {exercises[selectedRule].exercises.length} Aufgaben richtig
+                  {exercises[selectedRule].exercises.filter(ex => solvedExercises[ex.id]).length} von {exercises[selectedRule].exercises.length} Aufgaben gelöst
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+      )
+    },
+    // NEUES KAPITEL: SUBSTITUTION
+    {
+      title: "Substitution",
+      subtitle: "Komplexere Integrale vereinfachen",
+      content: (
+        <div className="slide-content">
+          {!selectedRule ? (
+            <>
+              <div className="substitution-intro">
+                <h3>Was ist Substitution?</h3>
+                <p>
+                  Substitution ist eine mächtige Technik, um komplizierte Integrale zu vereinfachen. 
+                  Die Idee: Wir ersetzen einen komplizierten Teil durch eine neue Variable u, 
+                  integrieren in u, und setzen dann zurück.
+                </p>
+              </div>
+
+              <div className="method-box">
+                <h4>Die Methode in 4 Schritten:</h4>
+                <div className="method-steps">
+                  <div className="method-step">
+                    <div className="method-number">1</div>
+                    <div>
+                      <strong>Substitution wählen:</strong> Setze u = g(x) für einen inneren Term
+                    </div>
+                  </div>
+                  <div className="method-step">
+                    <div className="method-number">2</div>
+                    <div>
+                      <strong>Ableiten:</strong> Berechne du/dx = g'(x), also du = g'(x)dx
+                    </div>
+                  </div>
+                  <div className="method-step">
+                    <div className="method-number">3</div>
+                    <div>
+                      <strong>Ersetzen:</strong> Schreibe das Integral in u
+                    </div>
+                  </div>
+                  <div className="method-step">
+                    <div className="method-number">4</div>
+                    <div>
+                      <strong>Rücksubstitution:</strong> Ersetze u wieder durch g(x)
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="example-box">
+                <h4>Beispiel: ∫ 2x · e^(x²) dx</h4>
+                <div className="example-solution">
+                  <p><strong>Schritt 1:</strong> Setze u = x² (der Exponent)</p>
+                  <p><strong>Schritt 2:</strong> du/dx = 2x, also du = 2x dx</p>
+                  <p><strong>Schritt 3:</strong> ∫ e^u du = e^u + C</p>
+                  <p><strong>Schritt 4:</strong> e^(x²) + C</p>
+                </div>
+              </div>
+
+              <div className="rule-card clickable substitution-card" 
+                   onClick={() => setSelectedRule('substitution')}
+                   style={{ borderColor: exercises.substitution.color }}>
+                <div className="rule-name" style={{ color: exercises.substitution.color }}>
+                  {exercises.substitution.name}
+                </div>
+                <div className="rule-formula">
+                  {exercises.substitution.formula}
+                </div>
+                <div className="rule-progress">
+                  <div className="progress-text">
+                    {exercises.substitution.exercises.filter(ex => solvedExercises[ex.id]).length} / {exercises.substitution.exercises.length} Aufgaben gelöst
+                  </div>
+                  <div className="progress-bar-small">
+                    <div 
+                      className="progress-fill-small" 
+                      style={{ 
+                        width: `${(exercises.substitution.exercises.filter(ex => solvedExercises[ex.id]).length / exercises.substitution.exercises.length) * 100}%`,
+                        backgroundColor: exercises.substitution.color
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="click-hint" style={{ color: exercises.substitution.color }}>
+                  Klicken für {exercises.substitution.exercises.length} Übungen →
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="exercises-view">
+              <button 
+                className="back-button"
+                onClick={() => {
+                  setSelectedRule(null);
+                  setCheckedAnswers({});
+                  setShowSolution({});
+                  setShowHints({});
+                  setFailedAttempts({});
+                  setInputHistory({});
+                }}
+                style={{ borderColor: exercises[selectedRule].color }}
+              >
+                ← Zurück zur Erklärung
+              </button>
+              
+              <div className="exercise-header-info">
+                <h3 style={{ color: exercises[selectedRule].color }}>
+                  {exercises[selectedRule].name}
+                </h3>
+                <p className="formula-reminder">{exercises[selectedRule].formula}</p>
+              </div>
+
+              <div className="exercises-container">
+                {exercises[selectedRule].exercises.map((exercise) => (
+                  <ExerciseCard 
+                    key={exercise.id} 
+                    exercise={exercise}
+                    ruleColor={exercises[selectedRule].color}
+                  />
+                ))}
+              </div>
+
+              <div className="progress-summary">
+                <Award size={24} style={{ color: exercises[selectedRule].color }} />
+                <span>
+                  {exercises[selectedRule].exercises.filter(ex => solvedExercises[ex.id]).length} von {exercises[selectedRule].exercises.length} Aufgaben gelöst
                 </span>
               </div>
             </div>
@@ -837,6 +1333,14 @@ const IntegralTutorial = () => {
               <div className="point">
                 <span className="number">4</span>
                 <div>
+                  <strong>Substitution:</strong> Eine mächtige Technik für komplexere Integrale - 
+                  ersetze komplizierte Terme durch neue Variablen.
+                </div>
+              </div>
+              
+              <div className="point">
+                <span className="number">5</span>
+                <div>
                   <strong>Anwendungen:</strong> Von Populationsdynamik über Stoffwechsel 
                   bis hin zu Diffusion – Integrale sind überall in der Biologie!
                 </div>
@@ -847,8 +1351,9 @@ const IntegralTutorial = () => {
           <div className="next-steps">
             <h4>Weiter üben!</h4>
             <p>
-              Der beste Weg, Integrale zu meistern, ist Übung. Geh zurück zu Seite 5 
-              und arbeite durch alle Übungsaufgaben. Mit der Zeit entwickelst du ein 
+              Du hast jetzt {progress.solved} von {progress.total} Aufgaben gelöst ({progress.percentage}%)! 
+              Der beste Weg, Integrale zu meistern, ist kontinuierliches Üben. Gehe zurück zu den 
+              Kapiteln und arbeite durch alle Übungsaufgaben. Mit der Zeit entwickelst du ein 
               Gefühl dafür, welche Technik du wann anwenden musst. Viel Erfolg!
             </p>
           </div>
@@ -921,6 +1426,7 @@ const IntegralTutorial = () => {
           border-bottom: 2px solid rgba(255, 255, 255, 0.1);
           background: rgba(0, 0, 0, 0.2);
           backdrop-filter: blur(10px);
+          position: relative;
         }
         
         .header h1 {
@@ -937,6 +1443,58 @@ const IntegralTutorial = () => {
         .header p {
           font-size: 1.1rem;
           color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* PROGRESS INDICATOR IM HEADER */
+        .global-progress {
+          position: absolute;
+          top: 1rem;
+          right: 2rem;
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          background: rgba(0, 0, 0, 0.3);
+          padding: 0.75rem 1.5rem;
+          border-radius: 50px;
+          border: 2px solid rgba(78, 205, 196, 0.3);
+        }
+
+        .progress-icon {
+          color: #4ecdc4;
+        }
+
+        .progress-info {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .progress-label {
+          font-size: 0.8rem;
+          color: rgba(255, 255, 255, 0.6);
+          font-family: 'Space Mono', monospace;
+        }
+
+        .progress-stats {
+          font-size: 1.1rem;
+          font-weight: 700;
+          color: #4ecdc4;
+          font-family: 'Space Mono', monospace;
+        }
+
+        .progress-bar {
+          width: 150px;
+          height: 8px;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 4px;
+          overflow: hidden;
+        }
+
+        .progress-fill {
+          height: 100%;
+          background: linear-gradient(90deg, #ff6b35 0%, #4ecdc4 100%);
+          transition: width 0.5s ease;
+          border-radius: 4px;
         }
         
         .slide-wrapper {
@@ -1227,6 +1785,95 @@ const IntegralTutorial = () => {
           margin-left: 1rem;
           color: rgba(255, 255, 255, 0.6);
         }
+
+        /* SUBSTITUTION INTRO STYLES */
+        .substitution-intro {
+          background: rgba(155, 89, 182, 0.1);
+          border: 2px solid rgba(155, 89, 182, 0.3);
+          border-radius: 16px;
+          padding: 2rem;
+          margin-bottom: 2rem;
+        }
+
+        .substitution-intro h3 {
+          color: #9b59b6;
+          margin-bottom: 1rem;
+          font-size: 1.5rem;
+        }
+
+        .method-box {
+          background: rgba(255, 255, 255, 0.05);
+          border: 2px solid rgba(155, 89, 182, 0.3);
+          border-radius: 16px;
+          padding: 2rem;
+          margin-bottom: 2rem;
+        }
+
+        .method-box h4 {
+          color: #9b59b6;
+          margin-bottom: 1.5rem;
+          font-size: 1.3rem;
+        }
+
+        .method-steps {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .method-step {
+          display: flex;
+          align-items: flex-start;
+          gap: 1rem;
+          padding: 1rem;
+          background: rgba(155, 89, 182, 0.1);
+          border-radius: 8px;
+          border-left: 4px solid #9b59b6;
+        }
+
+        .method-number {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 36px;
+          height: 36px;
+          background: #9b59b6;
+          color: #fff;
+          border-radius: 50%;
+          font-weight: 700;
+          font-family: 'Space Mono', monospace;
+          flex-shrink: 0;
+        }
+
+        .example-box {
+          background: rgba(0, 0, 0, 0.3);
+          border: 2px solid rgba(155, 89, 182, 0.3);
+          border-radius: 16px;
+          padding: 2rem;
+          margin-bottom: 2rem;
+        }
+
+        .example-box h4 {
+          color: #9b59b6;
+          margin-bottom: 1rem;
+          font-size: 1.3rem;
+          font-family: 'Space Mono', monospace;
+        }
+
+        .example-solution {
+          margin-top: 1rem;
+        }
+
+        .example-solution p {
+          padding: 0.5rem;
+          margin-bottom: 0.5rem;
+          background: rgba(155, 89, 182, 0.1);
+          border-radius: 6px;
+        }
+
+        .substitution-card {
+          margin-top: 2rem;
+        }
         
         .rules-grid {
           display: grid;
@@ -1261,13 +1908,38 @@ const IntegralTutorial = () => {
         }
         
         .rule-formula {
-          font-size: 1.3rem;
+          font-size: 1.1rem;
           margin-bottom: 1rem;
           padding: 1rem;
           background: rgba(0, 0, 0, 0.3);
           border-radius: 8px;
           font-family: 'Space Mono', monospace;
           color: #4ecdc4;
+        }
+
+        .rule-progress {
+          margin: 1rem 0;
+        }
+
+        .progress-text {
+          font-size: 0.9rem;
+          color: rgba(255, 255, 255, 0.7);
+          margin-bottom: 0.5rem;
+          font-family: 'Space Mono', monospace;
+        }
+
+        .progress-bar-small {
+          width: 100%;
+          height: 6px;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 3px;
+          overflow: hidden;
+        }
+
+        .progress-fill-small {
+          height: 100%;
+          transition: width 0.5s ease;
+          border-radius: 3px;
         }
         
         .click-hint {
@@ -1346,6 +2018,25 @@ const IntegralTutorial = () => {
           border-radius: 16px;
           padding: 2rem;
           transition: transform 0.3s ease, box-shadow 0.3s ease;
+          position: relative;
+        }
+
+        .exercise-card.solved {
+          border-color: rgba(78, 205, 196, 0.5);
+          background: rgba(78, 205, 196, 0.05);
+        }
+
+        .exercise-card.solved::before {
+          content: '';
+          position: absolute;
+          top: -2px;
+          left: -2px;
+          right: -2px;
+          bottom: -2px;
+          background: linear-gradient(135deg, rgba(78, 205, 196, 0.3), rgba(255, 107, 53, 0.3));
+          border-radius: 16px;
+          z-index: -1;
+          opacity: 0.5;
         }
         
         .exercise-card:hover {
@@ -1358,6 +2049,26 @@ const IntegralTutorial = () => {
           justify-content: space-between;
           align-items: center;
           margin-bottom: 1.5rem;
+        }
+
+        .exercise-header-left {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+
+        .solved-badge {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.5rem 1rem;
+          background: rgba(78, 205, 196, 0.2);
+          border: 1px solid #4ecdc4;
+          border-radius: 20px;
+          font-size: 0.85rem;
+          font-weight: 700;
+          color: #4ecdc4;
+          font-family: 'Space Mono', monospace;
         }
         
         .difficulty {
@@ -1889,6 +2600,12 @@ const IntegralTutorial = () => {
           .header h1 {
             font-size: 1.8rem;
           }
+
+          .global-progress {
+            position: static;
+            margin-top: 1rem;
+            justify-content: center;
+          }
           
           .slide-title {
             font-size: 1.8rem;
@@ -1920,6 +2637,21 @@ const IntegralTutorial = () => {
       <div className="header">
         <h1>Integrale Meistern</h1>
         <p>Ein interaktives Tutorial zur Integralrechnung mit Übungen</p>
+        
+        {/* GLOBALER FORTSCHRITT */}
+        <div className="global-progress">
+          <TrendingUp size={24} className="progress-icon" />
+          <div className="progress-info">
+            <div className="progress-label">Dein Fortschritt</div>
+            <div className="progress-stats">{progress.solved} / {progress.total}</div>
+          </div>
+          <div className="progress-bar">
+            <div 
+              className="progress-fill" 
+              style={{ width: `${progress.percentage}%` }}
+            />
+          </div>
+        </div>
       </div>
       
       <div className="slide-wrapper">
